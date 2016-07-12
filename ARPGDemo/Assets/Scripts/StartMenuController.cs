@@ -6,6 +6,7 @@ public class StartMenuController : MonoBehaviour {
 	#region attr&var
 	public TweenScale StartPanelTween;
 	public UILabel StartPanelUsernameLabel;
+	public UILabel StartPanelServerLabel;
 
 	public TweenScale LoginPanelTween;
 	public UIInput UsernameInputLogin;
@@ -16,9 +17,23 @@ public class StartMenuController : MonoBehaviour {
 	public UIInput PwdInputReg;
 	public UIInput ConfirmPwdInputReg;
 
+	public TweenScale ServerPanelTween;
+	public GameObject RedServerCellPrefab;
+	public GameObject GreenServerCellPrefab;
+	public UIGrid ServerGrid;
+
+	public GameObject SelectedServerItem;
+
+	public static ServerModel Sm;
 	public static string Username;
 	public static string Pwd;
 
+	#endregion
+
+	#region engine func
+	void Start(){
+		InitServerList ();
+	}
 	#endregion
 
 	#region start panel
@@ -36,6 +51,10 @@ public class StartMenuController : MonoBehaviour {
 	/// startpanel btn_server
 	/// </summary>
 	public void OnServerClick(){
+		StartPanelTween.PlayForward ();
+		StartCoroutine (HidePanel (StartPanelTween.gameObject));
+		ServerPanelTween.gameObject.SetActive (true);
+		ServerPanelTween.PlayForward ();
 	}
 
 	/// <summary>
@@ -115,6 +134,52 @@ public class StartMenuController : MonoBehaviour {
 		StartCoroutine (HidePanel (RegPanelTween.gameObject));
 		StartPanelTween.gameObject.SetActive (true);
 		StartPanelTween.PlayReverse ();
+	}
+	#endregion
+
+	#region server panel
+	/// <summary>
+	/// server panel btn close
+	/// </summary>
+	public void OnServerCloseClick(){
+		ServerPanelTween.PlayReverse ();
+		StartCoroutine (HidePanel (ServerPanelTween.gameObject));
+		StartPanelTween.gameObject.SetActive (true);
+		StartPanelTween.PlayReverse ();
+	}
+
+	private void InitServerList(){
+		for (int i = 0; i < 30; i++) {
+			string ip = "127.0.0.1";
+			string name = string.Format ("{0}区 马达加斯加", i + 1);
+			int count = Random.Range (0, 100);
+			GameObject serverItem = null;
+			if (count > 50) {
+				//red
+				serverItem = NGUITools.AddChild(ServerGrid.gameObject, RedServerCellPrefab);
+			} else {
+				//green
+				serverItem = NGUITools.AddChild(ServerGrid.gameObject, GreenServerCellPrefab);
+			}
+
+			ServerModel model = serverItem.GetComponent<ServerModel> ();
+			model.Name = name;
+			model.IP = ip;
+			model.Count = count;
+			ServerGrid.AddChild (serverItem.transform);
+		}
+	}
+
+	public void SelectServer(GameObject go){
+		Sm = go.GetComponent<ServerModel> ();
+		SelectedServerItem.GetComponent<UIButton> ().normalSprite = go.GetComponent<UIButton> ().normalSprite;
+		SelectedServerItem.GetComponent<UIButton> ().hoverSprite = go.GetComponent<UIButton> ().hoverSprite;
+		SelectedServerItem.GetComponent<UIButton> ().pressedSprite = go.GetComponent<UIButton> ().pressedSprite;
+		SelectedServerItem.GetComponent<UIButton> ().disabledSprite = go.GetComponent<UIButton> ().disabledSprite;
+		SelectedServerItem.transform.Find ("Label").GetComponent<UILabel> ().text = Sm.Name;
+		SelectedServerItem.transform.Find ("Label").GetComponent<UILabel> ().color = go.transform.Find ("Label").GetComponent<UILabel> ().color;
+		StartPanelServerLabel.text = Sm.Name;
+		OnServerCloseClick ();
 	}
 	#endregion
 
