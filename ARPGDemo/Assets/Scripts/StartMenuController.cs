@@ -4,7 +4,10 @@ using System.Collections;
 public class StartMenuController : MonoBehaviour {
 	
 	#region attr&var
+	public static StartMenuController Instance;
+
 	public TweenScale StartPanelTween;
+	public TweenPosition StartPanelTweenPos;
 	public UILabel StartPanelUsernameLabel;
 	public UILabel StartPanelServerLabel;
 
@@ -24,13 +27,20 @@ public class StartMenuController : MonoBehaviour {
 
 	public GameObject SelectedServerItem;
 
+	public TweenPosition SelectPlayerTweenPos;
+
 	public static ServerModel Sm;
 	public static string Username;
 	public static string Pwd;
 
+	private GameObject SelectedCharacter;
+
 	#endregion
 
 	#region engine func
+	void Awake(){
+		Instance = this;
+	}
 	void Start(){
 		InitServerList ();
 	}
@@ -61,6 +71,10 @@ public class StartMenuController : MonoBehaviour {
 	/// startpanel btn_enter
 	/// </summary>
 	public void OnEnterGameClick(){
+		StartPanelTweenPos.PlayForward ();
+		StartCoroutine (HidePanel (StartPanelTweenPos.gameObject));
+		SelectPlayerTweenPos.gameObject.SetActive (true);
+		SelectPlayerTweenPos.PlayForward ();
 	}
 
 	#endregion
@@ -180,6 +194,18 @@ public class StartMenuController : MonoBehaviour {
 		SelectedServerItem.transform.Find ("Label").GetComponent<UILabel> ().color = go.transform.Find ("Label").GetComponent<UILabel> ().color;
 		StartPanelServerLabel.text = Sm.Name;
 		OnServerCloseClick ();
+	}
+	#endregion
+
+	#region change player panel
+	public void ChangePlayer(GameObject go){
+		if (SelectedCharacter != go) {
+			if (SelectedCharacter) {
+				iTween.ScaleTo (SelectedCharacter.transform.parent.gameObject, new Vector3 (1.0f, 1.0f, 1.0f), 0.5f);
+			}
+			iTween.ScaleTo (go.transform.parent.gameObject, new Vector3 (1.5f, 1.5f, 1.5f), 0.5f);
+			SelectedCharacter = go;
+		}
 	}
 	#endregion
 
