@@ -81,6 +81,8 @@
 -define:UNITY_EDITOR_64
 -define:UNITY_EDITOR_OSX
 -define:UNITY_TEAM_LICENSE
+'Assets/ChangePlayer.cs'
+'Assets/Model/NPC_Boy/scripts/characterRotate.cs'
 'Assets/NGUI/Examples/Scripts/InventorySystem/Game/EquipItems.cs'
 'Assets/NGUI/Examples/Scripts/InventorySystem/Game/EquipRandomItem.cs'
 'Assets/NGUI/Examples/Scripts/InventorySystem/Game/UICursor.cs'
@@ -217,6 +219,5 @@
 'Assets/NGUI/Scripts/UI/UIViewport.cs'
 'Assets/Scripts/StartMenuController.cs'
 'Assets/ServerModel.cs'
-'Assets/villarger_B_Boy/scripts/characterRotate.cs'
 -r:'/Applications/Unity/Unity.app/Contents/Frameworks/Mono/lib/mono/unity/System.Runtime.Serialization.dll'
 -r:'/Applications/Unity/Unity.app/Contents/Frameworks/Mono/lib/mono/unity/System.Xml.Linq.dll'

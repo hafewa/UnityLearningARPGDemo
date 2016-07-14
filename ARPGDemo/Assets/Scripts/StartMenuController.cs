@@ -27,13 +27,21 @@ public class StartMenuController : MonoBehaviour {
 
 	public GameObject SelectedServerItem;
 
+	public GameObject[] SelectedCharacterPrefabArray;
 	public TweenPosition SelectPlayerTweenPos;
-
+	public UILabel SelectedPlayerNickName;
+	public UILabel SelectedPlayerLevel;
+	public GameObject PlayerContainer;
 	public static ServerModel Sm;
 	public static string Username;
 	public static string Pwd;
 
 	private GameObject SelectedCharacter;
+
+	public TweenPosition ChangePlayerTweenPos;
+	public UIInput ChangePlayerNicknameInput;
+	public GameObject[] ChangeCharactersWithShelf;
+	private int selectedPlayerIndex = -1;
 
 	#endregion
 
@@ -197,6 +205,18 @@ public class StartMenuController : MonoBehaviour {
 	}
 	#endregion
 
+	#region select player panel
+	/// <summary>
+	/// select player panel btn select player
+	/// </summary>
+	public void OnSelectPlayerClick(){
+		SelectPlayerTweenPos.PlayReverse ();
+		StartCoroutine (HidePanel (SelectPlayerTweenPos.gameObject));
+		ChangePlayerTweenPos.gameObject.SetActive (true);
+		ChangePlayerTweenPos.PlayForward ();
+	}
+	#endregion
+
 	#region change player panel
 	public void ChangePlayer(GameObject go){
 		if (SelectedCharacter != go) {
@@ -205,7 +225,39 @@ public class StartMenuController : MonoBehaviour {
 			}
 			iTween.ScaleTo (go.transform.parent.gameObject, new Vector3 (1.5f, 1.5f, 1.5f), 0.5f);
 			SelectedCharacter = go;
+			for (int i = 0; i < ChangeCharactersWithShelf.Length; i++) {
+				if (ChangeCharactersWithShelf [i] == go) {
+					selectedPlayerIndex = i;
+				}
+			}
 		}
+
+	}
+
+	public void OnChangePlayerConfirmClick(){
+		if (selectedPlayerIndex >= 0) {
+			SelectedPlayerNickName.text = ChangePlayerNicknameInput.value;
+			SelectedPlayerLevel.text = "Lv. 1";
+			//删除旧模型
+			GameObject.Destroy (PlayerContainer.GetComponentInChildren<Animation> ().gameObject);
+			//创建新模型
+			GameObject newObj = GameObject.Instantiate(SelectedCharacterPrefabArray[selectedPlayerIndex], Vector3.zero, Quaternion.identity) as GameObject;
+			newObj.transform.parent = PlayerContainer.transform;
+			newObj.transform.localPosition = Vector3.zero;
+			newObj.transform.localRotation = Quaternion.identity;
+			newObj.transform.localScale = new Vector3 (1, 1, 1);
+		}
+		OnChangePlayerCloseClick ();
+	}
+
+	/// <summary>
+	/// change player panel btn close
+	/// </summary>
+	public void OnChangePlayerCloseClick(){
+		ChangePlayerTweenPos.PlayReverse ();
+		StartCoroutine (HidePanel (ChangePlayerTweenPos.gameObject));
+		SelectPlayerTweenPos.gameObject.SetActive (true);
+		SelectPlayerTweenPos.PlayForward ();
 	}
 	#endregion
 
